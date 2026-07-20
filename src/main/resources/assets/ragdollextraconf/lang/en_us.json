@@ -1,0 +1,13 @@
+{
+  "itemGroup.ragdollextraconf": "Example Mod Tab",
+  "block.ragdollextraconf.example_block": "Example Block",
+  "item.ragdollextraconf.example_item": "Example Item",
+
+  "ragdollextraconf.configuration.title": "Ragdoll Reactions Extra Configurations  Configs",
+  "ragdollextraconf.configuration.section.ragdollextraconf.common.toml": "Ragdoll Reactions Extra Configurations  Configs",
+  "ragdollextraconf.configuration.section.ragdollextraconf.common.toml.title": "Ragdoll Reactions Extra Configurations  Configs",
+  "ragdollextraconf.configuration.items": "Item List",
+  "ragdollextraconf.configuration.logDirtBlock": "Log Dirt Block",
+  "ragdollextraconf.configuration.magicNumberIntroduction": "Magic Number Text",
+  "ragdollextraconf.configuration.magicNumber": "Magic Number"
+}
