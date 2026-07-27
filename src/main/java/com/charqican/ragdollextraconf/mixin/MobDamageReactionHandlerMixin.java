@@ -18,11 +18,8 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 @Mixin(value = MobDamageReactionHandler.class, remap = false)
 public abstract class MobDamageReactionHandlerMixin {
-	private static final double ARMOR_MAX = 30.0;
-	private static final double ARMOR_FLOOR = 0.25;
-	private static final double HEALTH_FRACTION_REFERENCE = 0.3;
-	private static final double HEALTH_FRACTION_FLOOR = 0.15;
-	private static final double MIN_CHANCE = 0.01;
+	private static final double MIN_CHANCE = 0.001;
+	private static final double MAX_CHANCE = 0.35;
 
 	// intercept boolean if on healthfraction
 	@ModifyExpressionValue(method = "onMobDamaged", at = @At(value = "INVOKE", target = "Ldev/leo/ragdollreactions/physics/MobDamageReactionHandler;requiredDamageForRemainingHealth(Lnet/minecraft/world/entity/LivingEntity;F)D"))
@@ -34,8 +31,8 @@ public abstract class MobDamageReactionHandlerMixin {
 	private static double ragdollextraconf$modifyRagdollChance(double originalChance, LivingEntity mob,
 			DamageSource source, float damage) {
 		WeaponTier tier = ragdollextraconf$resolveWeaponTier(source);
-		double armorMult = ragdollextraconf$armorMultiplier(mob, tier.armorPenaltyRate);
-		double healthMult = ragdollextraconf$healthFractionMultiplier(mob, damage);
+		double armorMult = ragdollextraconf$armorMultiplier(mob, tier);
+		double healthMult = ragdollextraconf$healthFractionMultiplier(mob, damage, tier);
 		double chance = ragdollextraconf$calculateChance(armorMult, healthMult, tier.baseChance);
 		RagdollReactionsExtraConfigurations.LOGGER.info(
 				"[ragdollextraconf] tier={} armorMult={} healthMult={} chance={}",
@@ -57,25 +54,24 @@ public abstract class MobDamageReactionHandlerMixin {
 		return WeaponTier.NOTAG;
 	}
 
-	private static double ragdollextraconf$armorMultiplier(LivingEntity mob, double armorPenalty) {
+	private static double ragdollextraconf$armorMultiplier(LivingEntity mob, WeaponTier tier) {
 		double armorPoints = mob.getAttributeBaseValue(Attributes.ARMOR);
-		double initialValue = Math.min(1.0, 1.0 - (armorPoints / ARMOR_MAX) * armorPenalty);
-		return Math.max(ARMOR_FLOOR, initialValue);
+		return tier.floorArmor + (1.0 - tier.floorArmor) * Math.exp(-tier.armorDecay * armorPoints);
 	}
 
-	private static double ragdollextraconf$healthFractionMultiplier(LivingEntity mob, float damage) {
+	private static double ragdollextraconf$healthFractionMultiplier(LivingEntity mob, float damage,
+			WeaponTier tier) {
 		double maxHealth = mob.getMaxHealth();
 		if (maxHealth <= 0.0) {
-			return HEALTH_FRACTION_FLOOR;
+			return tier.floorHealth;
 		}
-		double initialValue = Math.min(1.0, (damage / maxHealth) / HEALTH_FRACTION_REFERENCE);
-		return Math.max(HEALTH_FRACTION_FLOOR, initialValue);
+		double frac = damage / maxHealth;
+		return tier.floorHealth + (1.0 - tier.floorHealth) * (1.0 - Math.exp(-frac / tier.tau));
 	}
 
-	private static double ragdollextraconf$calculateChance(double armorMult, double healthMult,
-			double tierBaseChance) {
-		double initialValue = Math.min(1.0, tierBaseChance * armorMult * healthMult);
-		return Math.max(MIN_CHANCE, initialValue);
+	private static double ragdollextraconf$calculateChance(double armorMult, double healthMult, double base) {
+		double initialValue = base * armorMult * healthMult;
+		return Math.min(MAX_CHANCE, Math.max(MIN_CHANCE, initialValue));
 	}
 
 }
