@@ -4,7 +4,8 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "ragdollextraconf.refmap.json",
   "mixins": [
-    "MobDamageReactionHandlerMixin"
+    "MobDamageReactionHandlerMixin",
+    "PlayerExplosionHandlerMixin"
   ],
   "client": [],
   "server": []
