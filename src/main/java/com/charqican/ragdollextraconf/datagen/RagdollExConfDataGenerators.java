@@ -18,8 +18,6 @@ public final class RagdollExConfDataGenerators {
 				RagdollReactionsExtraConfigurations.MODID, event.getExistingFileHelper()) {
 			@Override
 			protected void addTags(HolderLookup.Provider provider) {
-				// vacío a propósito: este addon no genera tags de bloque,
-				// solo existe para satisfacer la dependencia de ItemTagsProvider
 			}
 		};
 		generator.addProvider(event.includeServer(), blockTags);
