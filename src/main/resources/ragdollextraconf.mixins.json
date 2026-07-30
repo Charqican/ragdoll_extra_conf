@@ -5,7 +5,8 @@
   "refmap": "ragdollextraconf.refmap.json",
   "mixins": [
     "MobDamageReactionHandlerMixin",
-    "PlayerExplosionHandlerMixin"
+    "PlayerExplosionHandlerMixin",
+    "PlayerDamageReactionHandlerMixin"
   ],
   "client": [],
   "server": []
